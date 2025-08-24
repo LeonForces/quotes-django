@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Топ-10 цитат{% endblock %}
+{% block content %}
+<h2>
+  {% if sort == 'views' %}
+    Топ-10 по просмотрам
+  {% elif sort == 'dislikes' %}
+    Топ-10 по дизлайкам
+  {% else %}
+    Топ-10 по лайкам
+  {% endif %}
+</h2>
+
+<form method="get" style="margin-bottom: 12px;">
+  <label>Фильтр по источнику:</label>
+  <select name="source" onchange="this.form.submit()">
+    <option value="">— Все —</option>
+    {% for s in sources %}
+      <option value="{{ s }}" {% if selected_source == s %}selected{% endif %}>{{ s }}</option>
+    {% endfor %}
+  </select>
+
+  <label style="margin-left: 12px;">Сортировка:</label>
+  <select name="sort" onchange="this.form.submit()">
+    <option value="likes" {% if sort == 'likes' %}selected{% endif %}>по лайкам</option>
+    <option value="views" {% if sort == 'views' %}selected{% endif %}>по просмотрам</option>
+    <option value="dislikes" {% if sort == 'dislikes' %}selected{% endif %}>по дизлайкам</option>
+  </select>
+  <noscript><button class="btn" type="submit">Применить</button></noscript>
+</form>
+
+{% if quotes %}
+  <ol>
+  {% for q in quotes %}
+    <li style="margin-bottom: 12px;">
+      <div class="quote">“{{ q.text }}”</div>
+      <div class="meta">Источник: <strong>{{ q.source }}</strong></div>
+      <div class="stats">Лайки: {{ q.likes }} | Дизлайки: {{ q.dislikes }} | Просмотры: {{ q.views }}</div>
+      <div style="margin-top: 8px;">
+        <form class="inline" method="post" action="{% url 'vote' q.id 'like' %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{% url 'popular' %}?sort={{ sort }}{% if selected_source %}&source={{ selected_source|urlencode }}{% endif %}" />
+          <button class="btn like" type="submit">Лайк</button>
+        </form>
+        <form class="inline" method="post" action="{% url 'vote' q.id 'dislike' %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{% url 'popular' %}?sort={{ sort }}{% if selected_source %}&source={{ selected_source|urlencode }}{% endif %}" />
+          <button class="btn dislike" type="submit">Дизлайк</button>
+        </form>
+      </div>
+    </li>
+  {% endfor %}
+  </ol>
+{% else %}
+  <p>Пока нет цитат.</p>
+{% endif %}
+{% endblock %}

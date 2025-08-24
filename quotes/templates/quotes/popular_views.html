@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Топ-10 по просмотрам{% endblock %}
+{% block content %}
+<h2>Топ-10 по просмотрам</h2>
+
+<form method="get" style="margin-bottom: 12px;">
+  <label>Фильтр по источнику:</label>
+  <select name="source" onchange="this.form.submit()">
+    <option value="">— Все —</option>
+    {% for s in sources %}
+      <option value="{{ s }}" {% if selected_source == s %}selected{% endif %}>{{ s }}</option>
+    {% endfor %}
+  </select>
+  <noscript><button class="btn" type="submit">Фильтровать</button></noscript>
+</form>
+
+{% if quotes %}
+  <ol>
+  {% for q in quotes %}
+    <li style="margin-bottom: 12px;">
+      <div class="quote">“{{ q.text }}”</div>
+      <div class="meta">Источник: <strong>{{ q.source }}</strong></div>
+      <div class="stats">Просмотры: {{ q.views }} | Лайки: {{ q.likes }} | Дизлайки: {{ q.dislikes }}</div>
+      <div style="margin-top: 8px;">
+        <form class="inline" method="post" action="{% url 'vote' q.id 'like' %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{% url 'popular_by_views' %}" />
+          <button class="btn like" type="submit">Лайк</button>
+        </form>
+        <form class="inline" method="post" action="{% url 'vote' q.id 'dislike' %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{% url 'popular_by_views' %}" />
+          <button class="btn dislike" type="submit">Дизлайк</button>
+        </form>
+      </div>
+    </li>
+  {% endfor %}
+  </ol>
+{% else %}
+  <p>Пока нет цитат.</p>
+{% endif %}
+{% endblock %}

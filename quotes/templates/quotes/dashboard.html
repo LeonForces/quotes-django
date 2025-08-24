@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Дашборд{% endblock %}
+{% block content %}
+<h2>Дашборд</h2>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px;">
+  <div style="padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--panel);">
+    <div class="meta">Количество цитат</div>
+    <div class="quote" style="font-size:1.8rem;">{{ metrics.quotes_count|default:0 }}</div>
+  </div>
+  <div style="padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--panel);">
+    <div class="meta">Всего просмотров</div>
+    <div class="quote" style="font-size:1.8rem;">{{ metrics.total_views|default:0 }}</div>
+  </div>
+  <div style="padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--panel);">
+    <div class="meta">Всего лайков</div>
+    <div class="quote" style="font-size:1.8rem;">{{ metrics.total_likes|default:0 }}</div>
+  </div>
+  <div style="padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--panel);">
+    <div class="meta">Всего дизлайков</div>
+    <div class="quote" style="font-size:1.8rem;">{{ metrics.total_dislikes|default:0 }}</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;">
+  <section style="padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--panel);">
+    <h3 style="margin:0 0 8px 0;">Топ‑5 по лайкам</h3>
+    <ol>
+      {% for q in top_likes %}
+        <li>
+          “{{ q.text|truncatechars:80 }}”
+          <div class="meta">👍 {{ q.likes }} · 👀 {{ q.views }} · {{ q.source }}</div>
+        </li>
+      {% empty %}
+        <li>Нет данных</li>
+      {% endfor %}
+    </ol>
+    <a class="btn secondary" href="{% url 'popular' %}" style="margin-top:8px;display:inline-block;">Все (Топ‑10 лайков)</a>
+  </section>
+
+  <section style="padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--panel);">
+    <h3 style="margin:0 0 8px 0;">Топ‑5 по просмотрам</h3>
+    <ol>
+      {% for q in top_views %}
+        <li>
+          “{{ q.text|truncatechars:80 }}”
+          <div class="meta">👀 {{ q.views }} · 👍 {{ q.likes }} · {{ q.source }}</div>
+        </li>
+      {% empty %}
+        <li>Нет данных</li>
+      {% endfor %}
+    </ol>
+    <a class="btn secondary" href="{% url 'popular_by_views' %}" style="margin-top:8px;display:inline-block;">Все (Топ‑10 просмотров)</a>
+  </section>
+
+  <section style="padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--panel);">
+    <h3 style="margin:0 0 8px 0;">Топ‑5 по дизлайкам</h3>
+    <ol>
+      {% for q in top_dislikes %}
+        <li>
+          “{{ q.text|truncatechars:80 }}”
+          <div class="meta">👎 {{ q.dislikes }} · 👀 {{ q.views }} · {{ q.source }}</div>
+        </li>
+      {% empty %}
+        <li>Нет данных</li>
+      {% endfor %}
+    </ol>
+    <a class="btn secondary" href="{% url 'popular_by_dislikes' %}" style="margin-top:8px;display:inline-block;">Все (Топ‑10 дизлайков)</a>
+  </section>
+</div>
+{% endblock %}

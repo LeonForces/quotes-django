@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Добавить цитату{% endblock %}
+{% block content %}
+<h2>Добавить цитату</h2>
+<form method="post">
+  {% csrf_token %}
+  <div>
+    {{ form.non_field_errors }}
+  </div>
+  <div>
+    <label>Текст</label><br/>
+    {{ form.text }}<br/>
+    {{ form.text.errors }}
+  </div>
+  <div>
+    <label>Источник</label><br/>
+    {{ form.source }}<br/>
+    {{ form.source.errors }}
+  </div>
+  <div>
+    <label>Вес</label><br/>
+    {{ form.weight }}<br/>
+    {{ form.weight.errors }}
+  </div>
+  <div style="margin-top: 12px;">
+    <button class="btn" type="submit">Сохранить</button>
+    <a class="btn secondary" href="{% url 'random_quote' %}">Отмена</a>
+  </div>
+</form>
+{% endblock %}

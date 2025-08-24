@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}Цитаты{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+<header>
+  <nav>
+    <a href="{% url 'random_quote' %}">Случайная</a> |
+    <a href="{% url 'submit_quote' %}">Добавить</a> |
+    <a href="{% url 'popular' %}">Топ-10</a> |
+    <a href="{% url 'dashboard' %}">Дашборд</a>
+  </nav>
+</header>
+<main>
+  <div class="messages">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="msg">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  </div>
+  {% block content %}{% endblock %}
+</main>
+<footer>
+  <small>&copy; {{ now|date:"Y" }} Quotes App</small>
+</footer>
+<script defer src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

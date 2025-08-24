@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Случайная цитата{% endblock %}
+{% block content %}
+<h2>Случайная цитата</h2>
+{% if quote %}
+  <div class="quote">“{{ quote.text }}”</div>
+  <div class="meta">Источник: <strong>{{ quote.source }}</strong></div>
+  <div class="stats">Просмотры: {{ quote.views }} | Лайки: {{ quote.likes }} | Дизлайки: {{ quote.dislikes }}</div>
+  <div style="margin-top: 12px;">
+    <form class="inline" method="post" action="{% url 'vote' quote.id 'like' %}">
+      {% csrf_token %}
+      <!-- После лайка — случайная цитата, исключая текущую -->
+      <input type="hidden" name="next" value="{% url 'random_quote' %}?exclude={{ quote.id }}" />
+      <button class="btn like" type="submit">Лайк</button>
+    </form>
+    <form class="inline" method="post" action="{% url 'vote' quote.id 'dislike' %}">
+      {% csrf_token %}
+      <!-- После дизлайка — случайная цитата, исключая текущую -->
+      <input type="hidden" name="next" value="{% url 'random_quote' %}?exclude={{ quote.id }}" />
+      <button class="btn dislike" type="submit">Дизлайк</button>
+    </form>
+  </div>
+{% else %}
+  <p>Цитат пока нет. Добавьте первую!</p>
+  <a class="btn" href="{% url 'submit_quote' %}">Добавить цитату</a>
+{% endif %}
+{% endblock %}
